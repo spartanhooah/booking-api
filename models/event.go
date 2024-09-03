@@ -2,6 +2,7 @@ package models
 
 import (
 	"booking-api/db"
+	"database/sql"
 	"time"
 )
 
@@ -21,7 +22,12 @@ func GetAllEvents() ([]Event, error) {
 		return nil, err
 	}
 
-	defer rows.Close()
+	defer func(rows *sql.Rows) {
+		sqlErr := rows.Close()
+		if sqlErr != nil {
+			err = sqlErr
+		}
+	}(rows)
 
 	var events []Event
 
@@ -59,7 +65,12 @@ func SaveEvent(event Event) error {
 	VALUES (?, ?, ?, ?, ?)`
 	statement, err := db.DB.Prepare(query)
 
-	defer statement.Close()
+	defer func(statement *sql.Stmt) {
+		sqlErr := statement.Close()
+		if sqlErr != nil {
+			err = sqlErr
+		}
+	}(statement)
 
 	if err != nil {
 		return err
@@ -77,12 +88,17 @@ func SaveEvent(event Event) error {
 	return err
 }
 
-func (event Event) UpdateEvent(id string) error {
+func UpdateEvent(id string, event Event) error {
 	query := "UPDATE events SET name = ?, description = ?, location = ?, date_time = ?, creator_id = ? WHERE id = ?"
 
 	statement, err := db.DB.Prepare(query)
 
-	defer statement.Close()
+	defer func(statement *sql.Stmt) {
+		sqlErr := statement.Close()
+		if sqlErr != nil {
+			err = sqlErr
+		}
+	}(statement)
 
 	if err != nil {
 		return err
@@ -95,4 +111,24 @@ func (event Event) UpdateEvent(id string) error {
 	}
 
 	return nil
+}
+
+func Delete(id string) error {
+	query := "DELETE FROM events WHERE id = ?"
+	statement, err := db.DB.Prepare(query)
+
+	if err != nil {
+		return err
+	}
+
+	defer func(statement *sql.Stmt) {
+		sqlErr := statement.Close()
+		if sqlErr != nil {
+			err = sqlErr
+		}
+	}(statement)
+
+	_, err = statement.Exec(id)
+
+	return err
 }

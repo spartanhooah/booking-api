@@ -25,3 +25,7 @@ PUT http://localhost:8080/events/2
     "Location": "My house",
     "DateTime": "2006-01-02T15:04:05Z"
 }
+
+###
+
+DELETE http://localhost:8080/events/2
