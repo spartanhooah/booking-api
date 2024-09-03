@@ -1,24 +1,50 @@
 package main
 
 import (
+	"booking-api/db"
 	"booking-api/models"
+	"database/sql"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"net/http"
 )
 
 func main() {
+	db.InitDB()
 	server := gin.Default()
 
 	server.GET("/events", getEvents)
+	server.GET("/events/:id", getEvent)
 	server.POST("/events", createEvent)
 
 	server.Run(":8080")
 }
 
 func getEvents(context *gin.Context) {
-	events := models.GetAllEvents()
+	events, err := models.GetAllEvents()
+
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
+
 	context.JSON(200, events)
+}
+
+func getEvent(context *gin.Context) {
+	id := context.Param("id")
+
+	event, err := models.GetEvent(id)
+
+	if err != nil {
+		if err.Error() == sql.ErrNoRows.Error() {
+			context.JSON(http.StatusNotFound, gin.H{"error": "No event found with id " + id})
+			return
+		}
+
+		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	context.JSON(http.StatusOK, event)
 }
 
 func createEvent(context *gin.Context) {
@@ -30,8 +56,10 @@ func createEvent(context *gin.Context) {
 		return
 	}
 
-	event.ID = uuid.New()
-	event.CreatorID = uuid.New()
 	context.JSON(http.StatusCreated, gin.H{"message": "success", "event": event})
-	models.SaveEvent(event)
+	err = models.SaveEvent(event)
+
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
 }

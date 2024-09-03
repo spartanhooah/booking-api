@@ -10,3 +10,7 @@ POST http://localhost:8080/events
 ###
 
 GET http://localhost:8080/events
+
+
+###
+GET http://localhost:8080/events/2
