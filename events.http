@@ -11,6 +11,17 @@ POST http://localhost:8080/events
 
 GET http://localhost:8080/events
 
+###
+
+GET http://localhost:8080/events/1
 
 ###
-GET http://localhost:8080/events/2
+
+PUT http://localhost:8080/events/2
+
+{
+    "Name": "Second test event",
+    "Description": "testing event description",
+    "Location": "My house",
+    "DateTime": "2006-01-02T15:04:05Z"
+}

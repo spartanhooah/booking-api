@@ -76,3 +76,23 @@ func SaveEvent(event Event) error {
 
 	return err
 }
+
+func (event Event) UpdateEvent(id string) error {
+	query := "UPDATE events SET name = ?, description = ?, location = ?, date_time = ?, creator_id = ? WHERE id = ?"
+
+	statement, err := db.DB.Prepare(query)
+
+	defer statement.Close()
+
+	if err != nil {
+		return err
+	}
+
+	_, err = statement.Exec(event.Name, event.Description, event.Location, event.DateTime, event.CreatorID, id)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
