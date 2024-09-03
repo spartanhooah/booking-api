@@ -9,7 +9,7 @@ var DB *sql.DB
 
 func InitDB() {
 	var err error
-	DB, err = sql.Open("sqlite3", "api.db")
+	DB, err = sql.Open("sqlite3", "api.db?_foreign_keys=1")
 
 	if err != nil {
 		panic("failed to connect to database")
@@ -22,6 +22,19 @@ func InitDB() {
 }
 
 func createTables() {
+	createUsersTable := `
+	CREATE TABLE IF NOT EXISTS users(
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		email TEXT NOT NULL UNIQUE,
+		password TEXT NOT NULL
+	)`
+
+	_, err := DB.Exec(createUsersTable)
+
+	if err != nil {
+		panic("Could not create users table")
+	}
+
 	createEventsTable := `
 	CREATE TABLE IF NOT EXISTS events (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -29,9 +42,10 @@ func createTables() {
 		description TEXT NOT NULL,
 		location TEXT NOT NULL,
 		date_time DATETIME NOT NULL,
-		creator_id INTEGER NOT NULL
+		creator_id INTEGER NOT NULL,
+		FOREIGN KEY(creator_id) REFERENCES users(id)
 	)`
-	_, err := DB.Exec(createEventsTable)
+	_, err = DB.Exec(createEventsTable)
 
 	if err != nil {
 		panic("Could not create events table")
