@@ -1,0 +1,12 @@
+POST http://localhost:8080/events
+
+{
+    "Name": "test event",
+    "Description": "testing event description",
+    "Location": "My house",
+    "DateTime": "2006-01-02T15:04:05Z"
+}
+
+###
+
+GET http://localhost:8080/events
