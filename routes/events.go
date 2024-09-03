@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"booking-api/db"
 	"booking-api/models"
 	"database/sql"
 	"github.com/gin-gonic/gin"
@@ -8,7 +9,7 @@ import (
 )
 
 func getEvents(context *gin.Context) {
-	events, err := models.GetAllEvents()
+	events, err := db.GetAllEvents()
 
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -20,7 +21,7 @@ func getEvents(context *gin.Context) {
 func getEvent(context *gin.Context) {
 	id := context.Param("id")
 
-	event, err := models.GetEvent(id)
+	event, err := db.GetEvent(id)
 
 	if err != nil {
 		if err.Error() == sql.ErrNoRows.Error() {
@@ -45,7 +46,7 @@ func createEvent(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusCreated, gin.H{"message": "success", "event": event})
-	err = models.SaveEvent(event)
+	err = db.SaveEvent(event)
 
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -63,7 +64,7 @@ func updateEvent(context *gin.Context) {
 
 	id := context.Param("id")
 
-	err = models.UpdateEvent(id, updatedEvent)
+	err = db.UpdateEvent(id, updatedEvent)
 
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -73,7 +74,7 @@ func updateEvent(context *gin.Context) {
 func deleteEvent(context *gin.Context) {
 	id := context.Param("id")
 
-	err := models.Delete(id)
+	err := db.Delete(id)
 
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
