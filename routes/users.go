@@ -9,7 +9,7 @@ import (
 
 func register(context *gin.Context) {
 	var user models.User
-	err := context.ShouldBind(&user)
+	err := context.ShouldBindJSON(&user)
 
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

@@ -2,11 +2,12 @@ package db
 
 import (
 	"booking-api/models"
+	"booking-api/utils"
 	"database/sql"
 )
 
 func Save(user models.User) error {
-	query := "INSERT INTO users(email, password) VALUES (?, ?)"
+	query := "INSERT INTO users(email, password, salt) VALUES (?, ?, ?)"
 
 	statement, err := DB.Prepare(query)
 
@@ -21,7 +22,13 @@ func Save(user models.User) error {
 		}
 	}(statement)
 
-	result, err := statement.Exec(user.Email, user.Password)
+	hashedPw, salt, err := utils.HashPassword(user.Password)
+
+	if err != nil {
+		return err
+	}
+
+	result, err := statement.Exec(user.Email, hashedPw, salt)
 
 	userId, err := result.LastInsertId()
 
