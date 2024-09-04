@@ -37,22 +37,28 @@ func login(context *gin.Context) {
 		return
 	}
 
-	err = ValidateCredentials(user)
+	err = ValidateCredentials(&user)
 
 	if err != nil {
 		context.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
 	}
 
-	context.JSON(http.StatusOK, user)
+	token, err := utils.GenerateToken(user.Email, user.ID)
+
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
+
+	context.JSON(http.StatusOK, gin.H{"token": token})
 }
 
-func ValidateCredentials(u models.User) error {
-	query := "SELECT password, salt FROM users WHERE email = ?"
+func ValidateCredentials(u *models.User) error {
+	query := "SELECT id, password, salt FROM users WHERE email = ?"
 	row := db.DB.QueryRow(query, u.Email)
 
 	var hashedPassword string
 	var salt string
-	err := row.Scan(&hashedPassword, &salt)
+	err := row.Scan(&u.ID, &hashedPassword, &salt)
 
 	if err != nil {
 		return errors.New("Invalid credentials.")

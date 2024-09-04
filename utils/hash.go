@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	time    = 1
+	passes  = 1
 	memory  = 64 * 1024
 	threads = 4
 	keyLen  = 32
@@ -22,7 +22,7 @@ func HashPassword(password string) (string, string, error) {
 		return "", "", err
 	}
 
-	hash := argon2.IDKey([]byte(password), salt, time, memory, threads, keyLen)
+	hash := argon2.IDKey([]byte(password), salt, passes, memory, threads, keyLen)
 
 	b64Hash := base64.RawStdEncoding.EncodeToString(hash)
 	b64Salt := base64.RawStdEncoding.EncodeToString(salt)
@@ -37,7 +37,7 @@ func HashesMatch(password, b64Salt, hashedPassword string) bool {
 		return false
 	}
 
-	hash := argon2.IDKey([]byte(password), salt, time, memory, threads, keyLen)
+	hash := argon2.IDKey([]byte(password), salt, passes, memory, threads, keyLen)
 
 	b64Hash := base64.RawStdEncoding.EncodeToString(hash)
 

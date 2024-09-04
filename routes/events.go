@@ -3,6 +3,7 @@ package routes
 import (
 	"booking-api/db"
 	"booking-api/models"
+	"booking-api/utils"
 	"database/sql"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -37,20 +38,36 @@ func getEvent(context *gin.Context) {
 }
 
 func createEvent(context *gin.Context) {
+	token := context.GetHeader("Authorization")
+
+	if token == "" {
+		context.JSON(http.StatusUnauthorized, gin.H{})
+		return
+	}
+
+	err := utils.VerifyToken(token)
+
+	if err != nil {
+		context.JSON(http.StatusUnauthorized, gin.H{"error": "Not authorized"})
+		return
+	}
+
 	var event models.Event
-	err := context.ShouldBindJSON(&event)
+	err = context.ShouldBindJSON(&event)
 
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	context.JSON(http.StatusCreated, gin.H{"message": "success", "event": event})
+	//event.CreatorID =
 	err = db.SaveEvent(event)
 
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
+
+	context.JSON(http.StatusCreated, gin.H{"message": "success", "event": event})
 }
 
 func updateEvent(context *gin.Context) {
