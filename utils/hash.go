@@ -24,13 +24,13 @@ func HashPassword(password string) (string, string, error) {
 
 	hash := argon2.IDKey([]byte(password), salt, time, memory, threads, keyLen)
 
-	b64Hash := base64.StdEncoding.EncodeToString(hash)
-	b64Salt := base64.StdEncoding.EncodeToString(salt)
+	b64Hash := base64.RawStdEncoding.EncodeToString(hash)
+	b64Salt := base64.RawStdEncoding.EncodeToString(salt)
 
 	return b64Hash, b64Salt, nil
 }
 
-func CompareHash(password, b64Salt, hashedPassword string) bool {
+func HashesMatch(password, b64Salt, hashedPassword string) bool {
 	salt, err := base64.RawStdEncoding.DecodeString(b64Salt)
 
 	if err != nil {

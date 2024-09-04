@@ -4,3 +4,12 @@ POST http://localhost:8080/signup
     "email": "test@example.com",
     "password": "test"
 }
+
+###
+
+POST localhost:8080/login
+
+{
+    "email": "test@example.com",
+    "password": "test"
+}
