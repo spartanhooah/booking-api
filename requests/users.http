@@ -1,7 +1,7 @@
 POST http://localhost:8080/signup
 
 {
-    "email": "test@example.com",
+    "email": "test2@example.com",
     "password": "test"
 }
 
@@ -10,6 +10,6 @@ POST http://localhost:8080/signup
 POST localhost:8080/login
 
 {
-    "email": "test@example.com",
+    "email": "test2@example.com",
     "password": "test"
 }

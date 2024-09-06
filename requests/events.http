@@ -1,11 +1,11 @@
 POST http://localhost:8080/events
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJleHAiOjE3MjU0NzY0ODksInVzZXJJZCI6MX0.Z61SRybXu3Xm8fJhOc41i6xQzRsxp5UXl4DiNGq5OxM
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3QyQGV4YW1wbGUuY29tIiwiZXhwIjoxNzI1NjQ5NTg4LCJ1c2VySWQiOjJ9._FcV0156tSm9fcvl4L1zz9YHgEH4P3nKt-M7E2EM3gY
 
 {
-    "Name": "test event 5",
-    "Description": "testing event description",
-    "Location": "My house",
-    "DateTime": "2006-01-02T15:04:05Z"
+    "name": "test event 9",
+    "description": "event that should have an actual event id",
+    "location": "My house",
+    "date_time": "2006-01-02T15:04:05Z"
 }
 
 ###

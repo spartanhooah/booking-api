@@ -69,7 +69,7 @@ func GetEvent(id string) (*models.Event, error) {
 	return &e, nil
 }
 
-func SaveEvent(event models.Event) error {
+func SaveEvent(event *models.Event) error {
 	query := `
 	INSERT INTO events(name, description, location, date_time, creator_id)
 	VALUES (?, ?, ?, ?, ?)`
