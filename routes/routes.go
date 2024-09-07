@@ -15,10 +15,12 @@ func RegisterRoutes(server *gin.Engine) {
 	authenticated.POST("/events", createEvent)
 	authenticated.PUT("/events/:id", updateEvent)
 	authenticated.DELETE("/events/:id", deleteEvent)
+	authenticated.POST("/events/:id/register", register)
+	authenticated.DELETE("/events/:id/register", cancelRegistration)
 
 	// a way to add a middleware/filter to a single route
 	//server.POST("/events", middleware.Authenticate, createEvent)
 
-	server.POST("/signup", register)
+	server.POST("/signup", registerUser)
 	server.POST("/login", login)
 }

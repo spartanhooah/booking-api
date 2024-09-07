@@ -13,12 +13,7 @@ func Delete(id string) error {
 		return err
 	}
 
-	defer func(statement *sql.Stmt) {
-		sqlErr := statement.Close()
-		if sqlErr != nil {
-			err = sqlErr
-		}
-	}(statement)
+	defer closeStatement(err, statement)
 
 	_, err = statement.Exec(id)
 
@@ -75,12 +70,7 @@ func SaveEvent(event *models.Event) error {
 	VALUES (?, ?, ?, ?, ?)`
 	statement, err := DB.Prepare(query)
 
-	defer func(statement *sql.Stmt) {
-		sqlErr := statement.Close()
-		if sqlErr != nil {
-			err = sqlErr
-		}
-	}(statement)
+	defer closeStatement(err, statement)
 
 	if err != nil {
 		return err
@@ -103,12 +93,7 @@ func UpdateEvent(id string, event models.Event) error {
 
 	statement, err := DB.Prepare(query)
 
-	defer func(statement *sql.Stmt) {
-		sqlErr := statement.Close()
-		if sqlErr != nil {
-			err = sqlErr
-		}
-	}(statement)
+	defer closeStatement(err, statement)
 
 	if err != nil {
 		return err
@@ -121,4 +106,42 @@ func UpdateEvent(id string, event models.Event) error {
 	}
 
 	return nil
+}
+
+func Register(e models.Event, userId int64) error {
+	query := "INSERT INTO registrations(event_id, user_id) VALUES (?, ?)"
+	statement, err := DB.Prepare(query)
+
+	if err != nil {
+		return err
+	}
+
+	defer closeStatement(err, statement)
+
+	_, err = statement.Exec(e.ID, userId)
+
+	return err
+}
+func CancelRegistration(e models.Event, userId int64) error {
+	query := "DELETE FROM registrations WHERE event_id = ? AND user_id = ?"
+	statement, err := DB.Prepare(query)
+
+	if err != nil {
+		return err
+	}
+
+	defer closeStatement(err, statement)
+
+	_, err = statement.Exec(e.ID, userId)
+
+	return err
+}
+
+func closeStatement(err error, statement *sql.Stmt) {
+	func(statement *sql.Stmt) {
+		sqlErr := statement.Close()
+		if sqlErr != nil {
+			err = sqlErr
+		}
+	}(statement)
 }

@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-func register(context *gin.Context) {
+func registerUser(context *gin.Context) {
 	var user models.User
 	err := context.ShouldBindJSON(&user)
 
