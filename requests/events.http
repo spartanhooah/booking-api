@@ -1,8 +1,8 @@
 POST http://localhost:8080/events
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3QyQGV4YW1wbGUuY29tIiwiZXhwIjoxNzI1NjQ5NTg4LCJ1c2VySWQiOjJ9._FcV0156tSm9fcvl4L1zz9YHgEH4P3nKt-M7E2EM3gY
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJleHAiOjE3MjU2Njg3MTUsInVzZXJJZCI6MX0.6Ku4rLvPisF9y9BcvW-lcr1KXZL9IPxFH_rstTFPKVs
 
 {
-    "name": "test event 9",
+    "name": "test event",
     "description": "event that should have an actual event id",
     "location": "My house",
     "date_time": "2006-01-02T15:04:05Z"
@@ -18,13 +18,14 @@ GET http://localhost:8080/events/1
 
 ###
 
-PUT http://localhost:8080/events/2
+PUT http://localhost:8080/events/1
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3QyQGV4YW1wbGUuY29tIiwiZXhwIjoxNzI1NjcwMzIwLCJ1c2VySWQiOjJ9.oJ4P-JVvBxS3I_TPRCgtMc4BwHs2KD1HI-b8Urv66vQ
 
 {
-    "Name": "Second test event",
-    "Description": "testing event description",
-    "Location": "My house",
-    "DateTime": "2006-01-02T15:04:05Z"
+    "name": "Second test event",
+    "description": "testing event description",
+    "location": "My house",
+    "date_time": "2006-01-02T15:04:05Z"
 }
 
 ###

@@ -3,7 +3,6 @@ package routes
 import (
 	"booking-api/db"
 	"booking-api/models"
-	"booking-api/utils"
 	"database/sql"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -38,29 +37,16 @@ func getEvent(context *gin.Context) {
 }
 
 func createEvent(context *gin.Context) {
-	token := context.GetHeader("Authorization")
-
-	if token == "" {
-		context.JSON(http.StatusUnauthorized, gin.H{})
-		return
-	}
-
-	userId, err := utils.VerifyToken(token)
-
-	if err != nil {
-		context.JSON(http.StatusUnauthorized, gin.H{"error": "Not authorized"})
-		return
-	}
-
 	var event models.Event
-	err = context.ShouldBindJSON(&event)
+	err := context.ShouldBindJSON(&event)
 
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	event.CreatorID = userId
+	event.CreatorID = context.GetInt64("userId")
+
 	err = db.SaveEvent(&event)
 
 	if err != nil {
@@ -81,17 +67,31 @@ func updateEvent(context *gin.Context) {
 
 	id := context.Param("id")
 
+	err, done := validateUser(context, id)
+
+	if done {
+		return
+	}
+
 	err = db.UpdateEvent(id, updatedEvent)
 
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "success", "event": updatedEvent})
 }
 
 func deleteEvent(context *gin.Context) {
 	id := context.Param("id")
 
-	err := db.Delete(id)
+	err, done := validateUser(context, id)
+
+	if done {
+		return
+	}
+
+	err = db.Delete(id)
 
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -99,4 +99,24 @@ func deleteEvent(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusOK, gin.H{"message": "successful deletion"})
+}
+
+func validateUser(context *gin.Context, id string) (error, bool) {
+	existingEvent, err := db.GetEvent(id)
+
+	if err != nil {
+		if err.Error() == sql.ErrNoRows.Error() {
+			context.JSON(http.StatusNotFound, gin.H{"error": "No event found with id " + id})
+			return nil, true
+		}
+
+		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return nil, true
+	}
+
+	if context.GetInt64("userId") != existingEvent.CreatorID {
+		context.JSON(http.StatusForbidden, gin.H{"error": "You can't update this event"})
+		return nil, true
+	}
+	return err, false
 }

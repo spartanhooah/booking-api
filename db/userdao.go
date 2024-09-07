@@ -6,7 +6,7 @@ import (
 	"database/sql"
 )
 
-func Save(user models.User) error {
+func Save(user *models.User) error {
 	query := "INSERT INTO users(email, password, salt) VALUES (?, ?, ?)"
 
 	statement, err := DB.Prepare(query)
